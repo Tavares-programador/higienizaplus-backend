@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedidos — Painel Higieniza+</title>
+<link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+
+<header class="topbar">
+    <h1>Higieniza<span class="plus">+</span> <small>painel</small></h1>
+    <div class="topbar-right">
+        <span id="userLabel"></span>
+        <button id="logoutBtn" class="btn-ghost">Sair</button>
+    </div>
+</header>
+
+<main class="dashboard">
+
+    <div class="filters">
+        <label for="statusFilter">Filtrar por status</label>
+        <select id="statusFilter">
+            <option value="">Todos</option>
+            <option value="NOVO">Novo</option>
+            <option value="EM_ANDAMENTO">Em andamento</option>
+            <option value="CONCLUIDO">Concluído</option>
+            <option value="CANCELADO">Cancelado</option>
+        </select>
+        <button id="refreshBtn" class="btn-primary">Atualizar</button>
+    </div>
+
+    <div id="loadingMsg" class="info-msg">Carregando pedidos...</div>
+    <div id="emptyMsg" class="info-msg" hidden>Nenhum pedido encontrado.</div>
+
+    <table id="pedidosTable" class="pedidos-table" hidden>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Nome</th>
+                <th>WhatsApp</th>
+                <th>E-mail</th>
+                <th>Serviço</th>
+                <th>Mensagem</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="pedidosBody"></tbody>
+    </table>
+
+    <div class="pagination">
+        <button id="prevPageBtn" class="btn-ghost">&larr; Anterior</button>
+        <span id="pageLabel"></span>
+        <button id="nextPageBtn" class="btn-ghost">Próxima &rarr;</button>
+    </div>
+
+</main>
+
+<script src="admin-config.js"></script>
+<script src="admin-dashboard.js"></script>
+</body>
+</html>
