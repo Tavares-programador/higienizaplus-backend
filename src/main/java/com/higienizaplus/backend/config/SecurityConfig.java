@@ -48,16 +48,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // publico: site enviando orcamento (POST), download do PDF de precos, login admin
+                        // Endpoints públicos
                         .requestMatchers(HttpMethod.POST, "/api/orcamentos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/orcamentos/pdf").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/precos/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/orcamentos/pdf").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/precos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,  "/api/precos").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers("/admin", "/admin/**", "/admin.html").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
-                        // protegido: listar, detalhar, atualizar status e excluir orcamentos exige ROLE_ADMIN
-                        .requestMatchers("/api/orcamentos/**").hasRole("ADMIN")
-                        .requestMatchers("/api/orcamentos").hasRole("ADMIN")
+                        // Endpoints protegidos (ADMIN)
+                        .requestMatchers(HttpMethod.GET,    "/api/orcamentos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,    "/api/orcamentos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,  "/api/orcamentos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/orcamentos/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -72,7 +75,6 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
