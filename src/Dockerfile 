@@ -1,12 +1,23 @@
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
-COPY src ./src
-RUN mvn clean package -DskipTests
 
-FROM eclipse-temurin:21-jre
+# Copia só o pom.xml primeiro para cachear dependências
+COPY pom.xml .
+RUN mvn dependency:go-offline -B --no-transfer-progress
+
+# Copia o código fonte
+COPY src ./src
+
+# Compila com flags de otimização para ser mais rápido
+RUN mvn clean package -DskipTests --no-transfer-progress -q
+
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
+
 COPY --from=build /app/target/higienizaplus-backend.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# Porta que o Render espera
+EXPOSE 10000
+
+# Arranca com menos memória (compatível com plano Free)
+ENTRYPOINT ["java", "-Xms128m", "-Xmx256m", "-jar", "app.jar"]
